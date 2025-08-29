@@ -33,6 +33,7 @@ async def on_ready():
 async def main():
     async with bot:
         await bot.load_extension('cogs.moideen_cog')
+        await bot.load_extension('cogs.utility_cog')
         
         await bot.start(BOT_TOKEN)
 
