@@ -13,7 +13,7 @@ class UtilityCog(commands.Cog):
         member_count = server.member_count
         
         embed = discord.Embed(
-            title=f"{server.name} - Oru Kurippu", # A Note
+            title=f"{server.name} - Oru Kurippu", 
             color=discord.Color.blue()
         )
         embed.set_thumbnail(url=server.icon.url if server.icon else None)
