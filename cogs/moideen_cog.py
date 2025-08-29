@@ -102,44 +102,57 @@ class MoideenCog(commands.Cog):
     
 
     
-    def add_journal_entry(self, user_name: str, entry: str):
-        
-        from datetime import datetime
-        try:
-            
-            with open(self.journal_file, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            
-            data = []
-        
-        
-        data.append({"user": user_name, "entry": entry, "timestamp": str(datetime.now())})
-        
-        
-        with open(self.journal_file, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
-
     
-    @app_commands.command(name="kathu", description="Add a line to Moideen's letter for Kanchana.")
-    @app_commands.describe(line="The sentence or thought you want to add.")
-    async def add_to_letter(self, interaction: discord.Interaction, line: str):
-        """Allows a user to contribute to the community journal."""
+
+    @app_commands.command(name="kathu", description="Send an anonymous letter to someone on the server.")
+    @app_commands.describe(
+        recipient="The person you want to send the letter to.",
+        message="Your secret message or confession."
+    )
+    async def send_anonymous_letter(self, interaction: discord.Interaction, recipient: discord.Member, message: str):
+        
+        
+        
+        if recipient.id == interaction.user.id:
+            await interaction.response.send_message("Ninakku ninnodu thanne oru rahasiyam parayano? (Do you want to tell a secret to yourself?)", ephemeral=True)
+            return
+        if recipient.bot:
+            await interaction.response.send_message("Ee yanthrangalkku hridhayamilla... (These machines have no heart...)", ephemeral=True)
+            return
+
+        
+        embed = discord.Embed(
+            title="നിങ്ങൾക്കൊരു സന്ദേശം...", 
+            description=f"*{message}*",
+            color=discord.Color.from_rgb(221, 46, 68) 
+        )
+        embed.set_footer(text="Iruvazhinjippuzha ariyathe onnum sambavikkunnilla... (Nothing happens without the river knowing...)")
+
         try:
             
-            self.add_journal_entry(interaction.user.display_name, line)
+            await recipient.send(embed=embed)
             
-            response_text = (
-                f"Ninte vaakukal njan ente Kanchana-kkaay ee thalukalil sookshikkum. "
-                f"Ente kaathirippu pole, ithum amaramaakum."
-                f"\n(I will save your words on these pages for my Kanchana. "
-                f"Like my waiting, this too will become eternal.)"
+            
+            confirmation_message = (
+                f"Ninte sandesham njan {recipient.display_name}-lekku ethichittundu. "
+                f"Ee ரகசியம் nammal thammil mathram..."
+                f"\n(I have delivered your message to {recipient.display_name}. "
+                f"This secret is just between us...)"
             )
+            await interaction.response.send_message(confirmation_message, ephemeral=True)
+
+        except discord.Forbidden:
             
-            await interaction.response.send_message(response_text, ephemeral=True) 
-            
+            error_message = (
+                f"Kshamikkanam, {recipient.display_name}-lekku enikku sandesham ethikkaan kazhinjilla. "
+                f"Avarude vaathilukal adanjirikkkunnu."
+                f"\n(Sorry, I could not deliver the message to {recipient.display_name}. "
+                f"Their doors are closed.)"
+            )
+            await interaction.response.send_message(error_message, ephemeral=True)
         except Exception as e:
-            await interaction.response.send_message("Kshamikkanam, ente thoolika chathichu. (Sorry, my pen has betrayed me.)", ephemeral=True)
+            
+            await interaction.response.send_message("Ente yaathrayil oru thadasam undayi. (There was an obstacle in my journey.)", ephemeral=True)
             print(f"Error in /kathu command: {e}")
 
 async def setup(bot: commands.Bot):
