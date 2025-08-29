@@ -135,7 +135,7 @@ class MoideenCog(commands.Cog):
             
             confirmation_message = (
                 f"Ninte sandesham njan {recipient.display_name}-lekku ethichittundu. "
-                f"Ee ரகசியம் nammal thammil mathram..."
+                f"Ee kaaryam nammal thammil mathram..."
                 f"\n(I have delivered your message to {recipient.display_name}. "
                 f"This secret is just between us...)"
             )
