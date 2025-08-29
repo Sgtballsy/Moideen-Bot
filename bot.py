@@ -4,6 +4,7 @@ import os
 from dotenv import load_dotenv
 import google.generativeai as genai
 import asyncio
+from keep_alive import keep_alive
 
 load_dotenv()
 BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
@@ -38,4 +39,5 @@ async def main():
         await bot.start(BOT_TOKEN)
 
 if __name__ == "__main__":
+    keep_alive()
     asyncio.run(main())
